@@ -1,0 +1,963 @@
+```html
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Vortex Pokémon Trades</title>
+
+  <link rel="stylesheet" href="style.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800&family=Roboto:wght@400;500;700&display=swap"
+    rel="stylesheet"
+  >
+</head>
+
+<body>
+
+  <!-- =========================
+       NAVBAR
+  ========================== -->
+
+  <header class="navbar">
+
+    <a href="#home" class="brand">
+      <span class="brand-main">VORTEX</span>
+      <span class="brand-sub">POKÉMON TRADES</span>
+    </a>
+
+    <nav class="nav-links">
+
+      <a href="#home">
+        Inicio
+      </a>
+
+      <a href="#trades">
+        Trades
+      </a>
+
+      <a href="#rules">
+        Reglas
+      </a>
+
+      <!-- DISCORD -->
+      <a
+        href="https://discord.gg/bQxkaHMvS"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="discord-nav-btn"
+      >
+        ⚡ Comunidad de Trades
+      </a>
+
+      <button
+        class="admin-login-btn"
+        onclick="adminLogin()"
+        type="button"
+      >
+        🔐 Admin
+      </button>
+
+    </nav>
+
+    <button
+      class="mobile-menu-btn"
+      id="mobileMenuBtn"
+      aria-label="Abrir menú"
+      type="button"
+    >
+      ☰
+    </button>
+
+  </header>
+
+
+  <!-- =========================
+       MOBILE MENU
+  ========================== -->
+
+  <div
+    class="mobile-menu"
+    id="mobileMenu"
+  >
+
+    <a href="#home">
+      Inicio
+    </a>
+
+    <a href="#trades">
+      Trades
+    </a>
+
+    <a href="#rules">
+      Reglas
+    </a>
+
+    <!-- DISCORD MOBILE -->
+    <a
+      href="https://discord.gg/bQxkaHMvS"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="discord-nav-btn"
+    >
+      ⚡ Comunidad de Trades
+    </a>
+
+    <button
+      class="admin-login-btn"
+      onclick="adminLogin()"
+      type="button"
+    >
+      🔐 Admin
+    </button>
+
+  </div>
+
+
+  <!-- =========================
+       HERO
+  ========================== -->
+
+  <main>
+
+    <section
+      class="hero"
+      id="home"
+    >
+
+      <div class="hero-bg"></div>
+
+      <div class="hero-content">
+
+        <div class="hero-badge">
+          ⚡ COMUNIDAD DE TRADES
+        </div>
+
+        <h1>
+          VORTEX
+          <span>
+            POKÉMON TRADES
+          </span>
+        </h1>
+
+        <p>
+          Intercambia Pokémon de forma sencilla,
+          segura y transparente.
+          Solo trades de conexión y Pokémon
+          obtenidos legalmente.
+        </p>
+
+        <div class="hero-buttons">
+
+          <button
+            class="btn btn-primary"
+            onclick="openModal('pedido')"
+            type="button"
+          >
+            🔎 Pedir Pokémon
+          </button>
+
+          <button
+            class="btn btn-secondary"
+            onclick="openModal('ofrecer')"
+            type="button"
+          >
+            ✨ Ofrecer Pokémon
+          </button>
+
+        </div>
+
+        <div class="hero-stats">
+
+          <div class="hero-stat">
+
+            <strong id="heroTradeCount">
+              0
+            </strong>
+
+            <span>
+              Trades
+            </span>
+
+          </div>
+
+          <div class="hero-stat">
+
+            <strong id="heroUserCount">
+              0
+            </strong>
+
+            <span>
+              Usuarios
+            </span>
+
+          </div>
+
+          <div class="hero-stat">
+
+            <strong>
+              100%
+            </strong>
+
+            <span>
+              Legal
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         QUICK STATS
+    ========================== -->
+
+    <section class="stats-section">
+
+      <div class="stats-grid">
+
+        <div class="stat-card">
+
+          <div class="stat-icon">
+            🔄
+          </div>
+
+          <div>
+
+            <strong id="statTrades">
+              0
+            </strong>
+
+            <span>
+              Trades activos
+            </span>
+
+          </div>
+
+        </div>
+
+        <div class="stat-card">
+
+          <div class="stat-icon">
+            ✨
+          </div>
+
+          <div>
+
+            <strong id="statShiny">
+              0
+            </strong>
+
+            <span>
+              Shiny publicados
+            </span>
+
+          </div>
+
+        </div>
+
+        <div class="stat-card">
+
+          <div class="stat-icon">
+            👑
+          </div>
+
+          <div>
+
+            <strong id="statLegendary">
+              0
+            </strong>
+
+            <span>
+              Legendarios
+            </span>
+
+          </div>
+
+        </div>
+
+        <div class="stat-card">
+
+          <div class="stat-icon">
+            🎁
+          </div>
+
+          <div>
+
+            <strong id="statEvents">
+              0
+            </strong>
+
+            <span>
+              Eventos
+            </span>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- =========================
+         TRADES
+    ========================== -->
+
+    <section
+      class="section container"
+      id="trades"
+    >
+
+      <div class="section-heading">
+
+        <div>
+
+          <span class="section-label">
+            MERCADO
+          </span>
+
+          <h2>
+            Trades publicados
+          </h2>
+
+          <p>
+            Encuentra Pokémon que otros entrenadores
+            están buscando u ofreciendo.
+          </p>
+
+        </div>
+
+        <button
+          class="btn btn-primary"
+          onclick="openModal('pedido')"
+          type="button"
+        >
+          + Publicar trade
+        </button>
+
+      </div>
+
+
+      <!-- SEARCH / FILTER -->
+
+      <div class="trade-tools">
+
+        <div class="search-box">
+
+          <span>
+            🔍
+          </span>
+
+          <input
+            type="text"
+            id="searchInput"
+            placeholder="Buscar Pokémon o usuario..."
+          >
+
+        </div>
+
+        <div class="filters">
+
+          <button
+            class="filter-btn active"
+            data-filter="all"
+            onclick="filterTrades('all', this)"
+            type="button"
+          >
+            Todos
+          </button>
+
+          <button
+            class="filter-btn"
+            data-filter="shiny"
+            onclick="filterTrades('shiny', this)"
+            type="button"
+          >
+            ✨ Shiny
+          </button>
+
+          <button
+            class="filter-btn"
+            data-filter="legendary"
+            onclick="filterTrades('legendary', this)"
+            type="button"
+          >
+            👑 Legendarios
+          </button>
+
+          <button
+            class="filter-btn"
+            data-filter="event"
+            onclick="filterTrades('event', this)"
+            type="button"
+          >
+            🎁 Eventos
+          </button>
+
+          <button
+            class="filter-btn"
+            data-filter="normal"
+            onclick="filterTrades('normal', this)"
+            type="button"
+          >
+            🐾 Normales
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- TRADES GRID -->
+
+      <div
+        class="trades-grid"
+        id="tradesGrid"
+      ></div>
+
+    </section>
+
+
+    <!-- =========================
+         RULES
+    ========================== -->
+
+    <section
+      class="section rules-section"
+      id="rules"
+    >
+
+      <div class="container">
+
+        <div class="section-heading centered">
+
+          <div>
+
+            <span class="section-label">
+              SEGURIDAD
+            </span>
+
+            <h2>
+              Código de Honor
+            </h2>
+
+            <p>
+              La comunidad Vortex se basa en trades
+              transparentes y Pokémon legales.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="rules-grid">
+
+          <article class="rule-card">
+
+            <div class="rule-number">
+              01
+            </div>
+
+            <div class="rule-icon">
+              🚫
+            </div>
+
+            <h3>
+              No Hacks
+            </h3>
+
+            <p>
+              Está prohibido publicar o intercambiar
+              Pokémon creados, alterados o generados
+              ilegalmente mediante software externo.
+            </p>
+
+          </article>
+
+
+          <article class="rule-card">
+
+            <div class="rule-number">
+              02
+            </div>
+
+            <div class="rule-icon">
+              🔍
+            </div>
+
+            <h3>
+              Verificación
+            </h3>
+
+            <p>
+              Si el origen de un Pokémon no puede
+              comprobarse, debe marcarse como
+              <strong>No Verificado</strong>.
+            </p>
+
+          </article>
+
+
+          <article class="rule-card">
+
+            <div class="rule-number">
+              03
+            </div>
+
+            <div class="rule-icon">
+              🛡️
+            </div>
+
+            <h3>
+              Cero estafas
+            </h3>
+
+            <p>
+              No publiques una oferta que no tengas
+              intención de cumplir. Las estafas pueden
+              resultar en la expulsión de la comunidad.
+            </p>
+
+          </article>
+
+
+          <article class="rule-card">
+
+            <div class="rule-number">
+              04
+            </div>
+
+            <div class="rule-icon">
+              🤝
+            </div>
+
+            <h3>
+              Respeto
+            </h3>
+
+            <p>
+              Trata a los demás entrenadores con respeto.
+              Nada de spam, amenazas o comportamiento tóxico.
+            </p>
+
+          </article>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- =========================
+       MODAL TRADE
+  ========================== -->
+
+  <div
+    class="modal"
+    id="tradeModal"
+    aria-hidden="true"
+  >
+
+    <div
+      class="modal-overlay"
+      onclick="closeModal()"
+    ></div>
+
+    <div class="modal-content">
+
+      <button
+        class="modal-close"
+        onclick="closeModal()"
+        aria-label="Cerrar"
+        type="button"
+      >
+        ×
+      </button>
+
+      <div class="modal-header">
+
+        <span class="section-label">
+          NUEVA PUBLICACIÓN
+        </span>
+
+        <h2 id="modalTitle">
+          Pedir Pokémon
+        </h2>
+
+        <p>
+          Completa los datos de tu trade.
+        </p>
+
+      </div>
+
+
+      <form id="tradeForm">
+
+        <input
+          type="hidden"
+          id="tradeType"
+          value="pedido"
+        >
+
+
+        <!-- USER -->
+
+        <div class="form-group">
+
+          <label for="username">
+            Nombre de usuario
+          </label>
+
+          <input
+            type="text"
+            id="username"
+            placeholder="Ej: SiulVTX"
+            maxlength="25"
+            required
+          >
+
+        </div>
+
+
+        <!-- POKEMON -->
+
+        <div class="form-group pokemon-selector">
+
+          <label for="pokemonName">
+            Pokémon
+          </label>
+
+          <input
+            type="text"
+            id="pokemonName"
+            placeholder="🔍 Busca un Pokémon..."
+            maxlength="30"
+            autocomplete="off"
+            required
+          >
+
+          <div
+            id="pokemonList"
+            class="pokemon-list"
+          ></div>
+
+        </div>
+
+
+        <div class="form-row">
+
+          <!-- GAME -->
+
+          <div class="form-group">
+
+            <label for="game">
+              Juego / Plataforma
+            </label>
+
+            <select
+              id="game"
+              required
+            >
+
+              <option value="Pokémon Escarlata">
+                Pokémon Escarlata
+              </option>
+
+              <option value="Pokémon Púrpura">
+                Pokémon Púrpura
+              </option>
+
+              <option value="Pokémon HOME">
+                Pokémon HOME
+              </option>
+
+            </select>
+
+          </div>
+
+
+          <!-- CATEGORY -->
+
+          <div class="form-group">
+
+            <label for="category">
+              Categoría
+            </label>
+
+            <select
+              id="category"
+              required
+            >
+
+              <option value="normal">
+                🐾 Normal
+              </option>
+
+              <option value="shiny">
+                ✨ Shiny
+              </option>
+
+              <option value="legendary">
+                👑 Legendario
+              </option>
+
+              <option value="event">
+                🎁 Evento
+              </option>
+
+            </select>
+
+          </div>
+
+        </div>
+
+
+        <!-- SHINY -->
+
+        <label class="check-box">
+
+          <input
+            type="checkbox"
+            id="isShiny"
+          >
+
+          <span>
+            Este Pokémon es Shiny ✨
+          </span>
+
+        </label>
+
+
+        <!-- VERIFIED -->
+
+        <label class="check-box">
+
+          <input
+            type="checkbox"
+            id="verified"
+          >
+
+          <span>
+            Puedo verificar el origen del Pokémon
+          </span>
+
+        </label>
+
+
+        <!-- DETAILS -->
+
+        <div class="form-group">
+
+          <label for="details">
+            Detalles
+          </label>
+
+          <textarea
+            id="details"
+            rows="4"
+            maxlength="500"
+            placeholder="Naturaleza, IVs, Poké Ball, origen, qué buscas a cambio..."
+          ></textarea>
+
+          <div
+            id="detailsWarning"
+            class="details-warning"
+            aria-live="polite"
+          ></div>
+
+        </div>
+
+
+        <div class="legal-warning">
+
+          ⚠️ Al publicar confirmas que el Pokémon ofrecido
+          cumple las reglas de la comunidad.
+
+        </div>
+
+
+        <button
+          type="submit"
+          class="btn btn-primary full-width"
+        >
+          🚀 Publicar trade
+        </button>
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       ADMIN LOGIN MODAL
+  ========================== -->
+
+  <div
+    class="modal"
+    id="adminModal"
+    aria-hidden="true"
+  >
+
+    <div
+      class="modal-overlay"
+      onclick="closeAdminModal()"
+    ></div>
+
+    <div class="modal-content">
+
+      <button
+        class="modal-close"
+        onclick="closeAdminModal()"
+        aria-label="Cerrar"
+        type="button"
+      >
+        ×
+      </button>
+
+      <div class="modal-header">
+
+        <span class="section-label">
+          VORTEX STAFF
+        </span>
+
+        <h2>
+          🔐 Administrador VTX
+        </h2>
+
+        <p>
+          Inicia sesión para administrar los trades.
+        </p>
+
+      </div>
+
+
+      <!-- SOLO UN FORMULARIO ADMIN -->
+
+      <form id="adminLoginForm">
+
+        <div class="form-group">
+
+          <label for="adminUsername">
+            Usuario de administrador
+          </label>
+
+          <input
+            type="text"
+            id="adminUsername"
+            placeholder="Usuario"
+            maxlength="50"
+            autocomplete="username"
+            required
+          >
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label for="adminPassword">
+            Contraseña de administrador
+          </label>
+
+          <input
+            type="password"
+            id="adminPassword"
+            placeholder="Contraseña"
+            maxlength="100"
+            autocomplete="current-password"
+            required
+          >
+
+        </div>
+
+
+        <button
+          type="submit"
+          class="btn btn-primary full-width"
+        >
+          🔐 Iniciar sesión
+        </button>
+
+      </form>
+
+    </div>
+
+  </div>
+
+
+  <!-- =========================
+       TOAST
+  ========================== -->
+
+  <div
+    class="toast"
+    id="toast"
+  ></div>
+
+
+  <!-- =========================
+       FOOTER
+  ========================== -->
+
+  <footer>
+
+    <div class="footer-content">
+
+      <div class="footer-brand">
+
+        <strong>
+          VORTEX
+        </strong>
+
+        <span>
+          POKÉMON TRADES
+        </span>
+
+      </div>
+
+
+      <p>
+        Proyecto fan-made e independiente.
+        No afiliado con Nintendo, Game Freak
+        ni The Pokémon Company.
+      </p>
+
+
+      <span class="footer-copy">
+        © 2026 Vortex Pokémon Trades
+      </span>
+
+    </div>
+
+  </footer>
+
+
+  <!-- =========================
+       JAVASCRIPT
+  ========================== -->
+
+  <script src="script.js"></script>
+
+</body>
+
+</html>
+```
