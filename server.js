@@ -11,7 +11,7 @@ const PORT = process.env.PORT || 3000;
 // CONFIGURACIÓN DEL ADMIN
 // ========================================
 
-const ADMIN_USERNAME = "AdminVTX";
+
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
 // ========================================
@@ -259,6 +259,10 @@ async function sendTradeToDiscord(trade) {
 // LOGIN ADMIN
 // ========================================
 
+// ========================================
+// LOGIN ADMIN
+// ========================================
+
 app.post(
     "/api/admin/login",
     (req, res) => {
@@ -273,22 +277,24 @@ app.post(
                 req.body.password || ""
             );
 
+        // Cualquier nombre de admin es válido.
+        // Todos usan la misma contraseña.
         if (
+            !username ||
             !ADMIN_PASSWORD ||
-            username !== ADMIN_USERNAME ||
             password !== ADMIN_PASSWORD
         ) {
 
             console.log(
                 `❌ Login admin rechazado: ${
-                    username || "sin usuario"
+                    username || "sin nombre"
                 }`
             );
 
             return res.status(401).json({
                 success: false,
                 error:
-                    "Usuario o contraseña incorrectos."
+                    "Nombre o contraseña incorrectos."
             });
         }
 
@@ -311,7 +317,6 @@ app.post(
         });
     }
 );
-
 // ========================================
 // PROTECCIÓN ADMIN
 // ========================================
