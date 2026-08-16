@@ -8,9 +8,8 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // ========================================
-// CONFIGURACIÓN DEL ADMIN
+// CONFIGURACIÓN ADMIN
 // ========================================
-
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
@@ -18,8 +17,6 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 // CONFIGURACIÓN DISCORD
 // ========================================
 
-// Pon aquí tu nuevo Webhook de Discord.
-// NO lo publiques en GitHub.
 const DISCORD_WEBHOOK_URL =
     process.env.DISCORD_WEBHOOK_URL || "";
 
@@ -31,7 +28,7 @@ let adminToken = null;
 let currentAdminUsername = null;
 
 // ========================================
-// CONFIGURACIÓN DEL SERVIDOR
+// CONFIGURACIÓN SERVIDOR
 // ========================================
 
 app.use(cors());
@@ -39,7 +36,7 @@ app.use(express.json());
 app.use(express.static(__dirname));
 
 // ========================================
-// ARCHIVO DE TRADES
+// ARCHIVOS
 // ========================================
 
 const TRADES_FILE = path.join(
@@ -47,10 +44,25 @@ const TRADES_FILE = path.join(
     "trades.json"
 );
 
+const USERS_FILE = path.join(
+    __dirname,
+    "users.json"
+);
+
+// Crear trades.json si no existe
 if (!fs.existsSync(TRADES_FILE)) {
     fs.writeFileSync(
         TRADES_FILE,
         "[]",
+        "utf8"
+    );
+}
+
+// Crear users.json si no existe
+if (!fs.existsSync(USERS_FILE)) {
+    fs.writeFileSync(
+        USERS_FILE,
+        "{}",
         "utf8"
     );
 }
@@ -60,9 +72,7 @@ if (!fs.existsSync(TRADES_FILE)) {
 // ========================================
 
 function readTrades() {
-
     try {
-
         const data = fs.readFileSync(
             TRADES_FILE,
             "utf8"
@@ -75,7 +85,6 @@ function readTrades() {
         return JSON.parse(data);
 
     } catch (error) {
-
         console.error(
             "❌ Error leyendo trades.json:",
             error
@@ -90,11 +99,53 @@ function readTrades() {
 // ========================================
 
 function saveTrades(trades) {
-
     fs.writeFileSync(
         TRADES_FILE,
         JSON.stringify(
             trades,
+            null,
+            2
+        ),
+        "utf8"
+    );
+}
+
+// ========================================
+// LEER USUARIOS
+// ========================================
+
+function readUsers() {
+    try {
+        const data = fs.readFileSync(
+            USERS_FILE,
+            "utf8"
+        );
+
+        if (!data.trim()) {
+            return {};
+        }
+
+        return JSON.parse(data);
+
+    } catch (error) {
+        console.error(
+            "❌ Error leyendo users.json:",
+            error
+        );
+
+        return {};
+    }
+}
+
+// ========================================
+// GUARDAR USUARIOS
+// ========================================
+
+function saveUsers(users) {
+    fs.writeFileSync(
+        USERS_FILE,
+        JSON.stringify(
+            users,
             null,
             2
         ),
@@ -109,7 +160,6 @@ function saveTrades(trades) {
 async function sendTradeToDiscord(trade) {
 
     if (!DISCORD_WEBHOOK_URL) {
-
         console.log(
             "⚠️ Discord Webhook no configurado."
         );
@@ -259,10 +309,6 @@ async function sendTradeToDiscord(trade) {
 // LOGIN ADMIN
 // ========================================
 
-// ========================================
-// LOGIN ADMIN
-// ========================================
-
 app.post(
     "/api/admin/login",
     (req, res) => {
@@ -277,8 +323,6 @@ app.post(
                 req.body.password || ""
             );
 
-        // Cualquier nombre de admin es válido.
-        // Todos usan la misma contraseña.
         if (
             !username ||
             !ADMIN_PASSWORD ||
@@ -317,6 +361,7 @@ app.post(
         });
     }
 );
+
 // ========================================
 // PROTECCIÓN ADMIN
 // ========================================
@@ -565,6 +610,199 @@ app.delete(
 );
 
 // ========================================
+// OBTENER REP DE USUARIO
+// ========================================
+
+app.get(
+    "/api/users/:username/rep",
+    (req, res) => {
+
+        try {
+
+            const username =
+                String(
+                    req.params.username || ""
+                ).trim();
+
+            if (!username) {
+                return res.status(400).json({
+                    success: false,
+                    error:
+                        "Usuario inválido."
+                });
+            }
+
+            const users =
+                readUsers();
+
+            const userKey =
+                username.toLowerCase();
+
+            const user =
+                users[userKey] || {
+                    username: username,
+                    rep: 0,
+                    voters: []
+                };
+
+            res.json({
+                success: true,
+                username:
+                    user.username,
+                rep:
+                    user.rep || 0
+            });
+
+        } catch (error) {
+
+            console.error(
+                "❌ Error obteniendo REP:",
+                error
+            );
+
+            res.status(500).json({
+                success: false,
+                error:
+                    "No se pudo obtener la REP."
+            });
+        }
+    }
+);
+
+// ========================================
+// DAR +REP
+// ========================================
+
+app.post(
+    "/api/users/:username/rep",
+    (req, res) => {
+
+        try {
+
+            const username =
+                String(
+                    req.params.username || ""
+                ).trim();
+
+            const voter =
+                String(
+                    req.body.voter || ""
+                ).trim();
+
+            if (!username) {
+
+                return res.status(400).json({
+                    success: false,
+                    error:
+                        "Usuario inválido."
+                });
+            }
+
+            if (!voter) {
+
+                return res.status(400).json({
+                    success: false,
+                    error:
+                        "Debes indicar quién está dando la REP."
+                });
+            }
+
+            // No permitimos darse REP a uno mismo
+            if (
+                voter.toLowerCase() ===
+                username.toLowerCase()
+            ) {
+
+                return res.status(400).json({
+                    success: false,
+                    error:
+                        "No puedes darte REP a ti mismo."
+                });
+            }
+
+            const users =
+                readUsers();
+
+            const userKey =
+                username.toLowerCase();
+
+            if (!users[userKey]) {
+
+                users[userKey] = {
+                    username: username,
+                    rep: 0,
+                    voters: []
+                };
+            }
+
+            if (!Array.isArray(
+                users[userKey].voters
+            )) {
+
+                users[userKey].voters = [];
+            }
+
+            const alreadyVoted =
+                users[userKey].voters.some(
+                    name =>
+                        String(name)
+                            .toLowerCase() ===
+                        voter.toLowerCase()
+                );
+
+            if (alreadyVoted) {
+
+                return res.status(400).json({
+                    success: false,
+                    error:
+                        "Este usuario ya le dio REP a esta persona."
+                });
+            }
+
+            users[userKey].rep =
+                Number(
+                    users[userKey].rep || 0
+                ) + 1;
+
+            users[userKey].voters.push(
+                voter
+            );
+
+            saveUsers(
+                users
+            );
+
+            console.log(
+                `⭐ ${voter} dio +REP a ${username}`
+            );
+
+            res.json({
+                success: true,
+                message:
+                    "REP agregada correctamente.",
+                username:
+                    users[userKey].username,
+                rep:
+                    users[userKey].rep
+            });
+
+        } catch (error) {
+
+            console.error(
+                "❌ Error dando REP:",
+                error
+            );
+
+            res.status(500).json({
+                success: false,
+                error:
+                    "No se pudo agregar la REP."
+            });
+        }
+    }
+);
+
+// ========================================
 // HEALTH CHECK
 // ========================================
 
@@ -592,6 +830,7 @@ app.listen(
     () => {
 
         console.log("");
+
         console.log(
             "===================================="
         );
@@ -609,7 +848,11 @@ app.listen(
         );
 
         console.log(
-            `📦 API: /api/trades`
+            "📦 API: /api/trades"
+        );
+
+        console.log(
+            "⭐ Sistema REP: ACTIVADO"
         );
 
         console.log(
